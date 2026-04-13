@@ -17,6 +17,9 @@
                                 <a href="#" class="nav-link active" id="admin-permissions-tab" data-bs-toggle="tab" data-bs-target="#admin-permissions" type="button" role="tab" aria-controls="admin-permissions" aria-selected="true">Permissions</a>
                             </li>
                             <li class="nav-item" role="presentation">
+                                <a href="#" class="nav-link" id="admin-source-tab" data-bs-toggle="tab" data-bs-target="#admin-source" type="button" role="tab" aria-controls="admin-source" aria-selected="false">Source Character</a>
+                            </li>
+                            <li class="nav-item" role="presentation">
                                 <a href="#" class="nav-link" id="admin-about-tab" data-bs-toggle="tab" data-bs-target="#admin-about" type="button" role="tab" aria-controls="admin-about" aria-selected="false">About</a>
                             </li>
                         </ul>
@@ -33,6 +36,9 @@
                                     <?php $this->groupsTemplate(); ?>
                                 </div>
                             </div>
+                        </div>
+                        <div class="tab-pane fade" id="admin-source" role="tabpanel" aria-labelledby="admin-source-tab">
+                            <?php $this->sourceTemplate(); ?>
                         </div>
                         <div class="tab-pane fade" id="admin-about" role="tabpanel" aria-labelledby="admin-about-tab">
                             <?php $this->aboutTemplate(); ?>
@@ -116,6 +122,51 @@
                 <?php
             }
             
+        }
+
+        protected function sourceCharactersTemplate() {
+            
+            ?>
+            <li class="list-group-item bg-dark text-light">
+                <div class="form-check">
+                    <input class="form-check-input source_character_selector" type="radio" name="source_characters" id="source_character_0" value="0" <?php echo (!$this->model->activeSource) ? "checked" : ""; ?>>
+                    <label class="form-check-label" for="source_character_0">
+                        No Selection
+                    </label>
+                </div>
+            </li>
+            <?php
+
+            foreach ($this->model->sourceCharacters as $characterID => $characterData) {
+                ?>
+                <li class="list-group-item bg-dark text-light">
+                    <div class="form-check">
+                        <input class="form-check-input source_character_selector" type="radio" name="source_characters" id="source_character_<?php echo htmlspecialchars($characterID); ?>" value="<?php echo htmlspecialchars($characterID); ?>" <?php echo ($characterData["Active"]) ? "checked" : ""; ?> <?php echo ($characterData["Invalid"]) ? "disabled" : ""; ?>>
+                        <label class="form-check-label" for="source_character_<?php echo htmlspecialchars($characterID); ?>">
+                            <?php 
+                                echo htmlspecialchars($characterData["Name"] 
+                                . " (" . $characterData["Corporation"] . ")" 
+                                . ((!is_null($characterData["Alliance"])) ? (" [" . $characterData["Alliance"] . "]") : "")); 
+                                echo ($characterData["Invalid"]) ? " <i class='bi bi-exclamation-triangle text-warning'></i>" : "";
+                            ?>
+                        </label>
+                    </div>
+                </li>
+                <?php
+            }
+            
+        }
+
+        protected function sourceTemplate() {
+            ?>
+
+            <h3 class="text-light">Contract Data Source</h3>
+
+            <ul class="mt-3 list-group">
+                <?php $this->sourceCharactersTemplate(); ?>
+            </ul>
+
+            <?php
         }
         
         protected function aboutTemplate() {

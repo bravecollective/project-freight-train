@@ -2,7 +2,7 @@
 
 Project Freight Train is a configurable rate calculator for freight services in Eve Online. It features a suite of configuration options, including standard routes, rush hauling, both broad and specific routing restrictions, custom volume and collateral limitations in a variety of scopes, and different pricing schemes for Jump Drive, Gate, Wormhole, and Pochven based hauling methods. 
 
-**Current Version: Pickup – 1 – 0**
+**Current Version: Truck – 0 – 0**
 
 ## Requirements
 
@@ -20,7 +20,7 @@ The core of this framework requires the following:
   * [Python MySQL Connector](https://dev.mysql.com/downloads/connector/python/)
 * An SQL Server
   * If you are using MySQL, the Authentication Method **MUST** be the Legacy Version. PDO does not support the use of `caching_sha2_password` Authentication.
-* A Registered Eve Online Application with the `esi-search.search_structures.v1` scope.
+* A Registered Eve Online Application with the `esi-search.search_structures.v1`, `esi-contracts.read_corporation_contracts.v1`, and `esi-universe.read_structures.v1` scopes.
   * This can be setup via the [Eve Online Developers Site](https://developers.eveonline.com/).
 * [When Using The Neucore Authentication Method] A Neucore Application
   * The application needs the `app-chars` and `app-groups` roles added, along with any groups that you want to be able to set access roles for.

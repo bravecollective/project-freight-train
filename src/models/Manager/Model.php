@@ -10,6 +10,8 @@
         public $tiers = [];
         public $regionRestrictions = [];
         public $systemRestrictions = [];
+        public $regionAllowed = [];
+        public $systemAllowed = [];
         public $routes = [];
 
         public function __construct(
@@ -22,6 +24,8 @@
             $this->tiers = $this->loadTiers();
             $this->regionRestrictions = $this->loadRestrictions("Region");
             $this->systemRestrictions = $this->loadRestrictions("System");
+            $this->regionAllowed = $this->loadAllowed("Region");
+            $this->systemAllowed = $this->loadAllowed("System");
             $this->routes = $this->loadRoutes();
 
         }
@@ -65,6 +69,35 @@
 
         }
 
+        private function loadAllowed($type) {
+
+            if ($type == "Region") {
+                $resultString = "evesystems.regionname";
+                $joinString = "allowedlocations.id = evesystems.regionid";
+            }
+            elseif ($type == "System") {
+                $resultString = "evesystems.name";
+                $joinString = "allowedlocations.id = evesystems.id";
+            }
+            else {
+                header($_SERVER["SERVER_PROTOCOL"] . " 500 Internal Server Error");
+                throw new \Exception("An Incorrect Type was Passed.", 11002);
+                return;
+            }
+
+            $restrictionQuery = $this->databaseConnection->prepare(
+                "SELECT DISTINCT $resultString AS name
+                FROM allowedlocations 
+                INNER JOIN evesystems ON $joinString
+                WHERE type = :type
+                ORDER BY name ASC"
+            );
+            $restrictionQuery->bindParam(":type", $type);
+            $restrictionQuery->execute();
+
+            return (array)$restrictionQuery->fetchAll(\PDO::FETCH_COLUMN);
+
+        }
 
         private function loadRoutes() {
 
@@ -76,10 +109,18 @@
                     routes.basepriceoverride AS price, 
                     routes.gatepriceoverride AS gateprice,
                     routes.minimumpriceoverride AS minimumprice,
+                    routes.maximumpriceoverride AS maximumprice,
+                    routes.minimumrushpremiumoverride AS minimumrushpremium,
                     routes.collateralpremiumoverride AS premium, 
                     routes.maxvolumeoverride AS maxvolume, 
                     routes.maxcollateraloverride AS maxcollateral,
-                    routes.disablehighcollateral AS disablehighcollateral
+                    routes.disablehighcollateral AS disablehighcollateral,
+                    routes.allowrushoverride AS allowrushoverride,
+                    routes.contractexpirationoverride AS expiration,
+                    routes.contracttimetocompleteoverride AS timetocomplete,
+                    routes.rushcontractexpirationoverride AS rushexpiration,
+                    routes.rushcontracttimetocompleteoverride AS rushtimetocomplete,
+                    routes.rushmultiplieroverride AS rushmultiplier
                 FROM routes 
                 INNER JOIN  evesystems AS startsystem ON routes.start = startsystem.id 
                 INNER JOIN evesystems AS endsystem ON routes.end = endsystem.id

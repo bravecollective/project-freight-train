@@ -71,6 +71,8 @@
         ["Name" => "maxpochvenvolume", "Type" => "BIGINT"], 
         ["Name" => "pochvenprice", "Type" => "BIGINT"], 
         ["Name" => "minimumprice", "Type" => "BIGINT"], 
+        ["Name" => "maximumprice", "Type" => "BIGINT"], 
+        ["Name" => "minimumrushpremium", "Type" => "BIGINT"], 
         ["Name" => "collateralpremium", "Type" => "NUMERIC(8,4)"],
         ["Name" => "highcollateralcutoff", "Type" => "BIGINT"], 
         ["Name" => "highcollateralpenalty", "Type" => "BIGINT"], 
@@ -90,19 +92,39 @@
         ["Name" => "basepriceoverride", "Type" => "BIGINT", "Special" => "DEFAULT NULL"],
         ["Name" => "gatepriceoverride", "Type" => "BIGINT", "Special" => "DEFAULT NULL"],
         ["Name" => "minimumpriceoverride", "Type" => "BIGINT", "Special" => "DEFAULT NULL"],
+        ["Name" => "maximumpriceoverride", "Type" => "BIGINT", "Special" => "DEFAULT NULL"],
+        ["Name" => "minimumrushpremiumoverride", "Type" => "BIGINT", "Special" => "DEFAULT NULL"],
         ["Name" => "pricemodel", "Type" => "TEXT"],
         ["Name" => "collateralpremiumoverride", "Type" => "NUMERIC(8,4)", "Special" => "DEFAULT NULL"],
         ["Name" => "maxvolumeoverride", "Type" => "BIGINT", "Special" => "DEFAULT NULL"],
         ["Name" => "maxcollateraloverride", "Type" => "BIGINT", "Special" => "DEFAULT NULL"],
         ["Name" => "disablehighcollateral", "Type" => "TINYINT"], 
+        ["Name" => "allowrushoverride", "Type" => "ENUM('Allow', 'Disallow')", "Special" => "DEFAULT NULL"], 
+        ["Name" => "contractexpirationoverride", "Type" => "TINYINT", "Special" => "DEFAULT NULL"], 
+        ["Name" => "contracttimetocompleteoverride", "Type" => "TINYINT", "Special" => "DEFAULT NULL"], 
+        ["Name" => "rushcontractexpirationoverride", "Type" => "TINYINT", "Special" => "DEFAULT NULL"], 
+        ["Name" => "rushcontracttimetocompleteoverride", "Type" => "TINYINT", "Special" => "DEFAULT NULL"], 
+        ["Name" => "rushmultiplieroverride", "Type" => "NUMERIC(8,4)"], 
         ["Name" => "", "Type" => "", "Special" => "CONSTRAINT PK_ROUTES_MUST_BE_UNIQUE PRIMARY KEY (start, end)"],
         ["Name" => "", "Type" => "", "Special" => "CONSTRAINT CHK_FIXED_NEEDS_PRICE CHECK (pricemodel != 'Fixed' OR basepriceoverride IS NOT NULL)"]
     );
 
     $siteDatabase->register(
+        "allowedlocations",
+        ["Name" => "id", "Type" => "BIGINT", "Special" => "primary key"],
+        ["Name" => "type", "Type" => "ENUM('System', 'Region')"]
+    );
+
+    $siteDatabase->register(
         "restrictedlocations",
         ["Name" => "id", "Type" => "BIGINT", "Special" => "primary key"],
-        ["Name" => "type", "Type" => "TEXT"]
+        ["Name" => "type", "Type" => "ENUM('System', 'Region')"]
+    );
+
+    $siteDatabase->register(
+        "sourcecharacters",
+        ["Name" => "id", "Type" => "BIGINT", "Special" => "primary key"],
+        ["Name" => "status", "Type" => "ENUM('Active', 'Inactive', 'Invalid')", "Special" => "DEFAULT 'Inactive'"]
     );
 
 ?>

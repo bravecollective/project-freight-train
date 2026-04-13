@@ -35,6 +35,13 @@ jQuery(document).ready(function () {
         2000);
     });
     
+    $(document).on("click", ".route-link", function () {
+        
+        $("#origin").val($(this).attr("data-route-start"));
+        $("#destination").val($(this).attr("data-route-end"));
+
+    });
+
 });
 
 function getSystems() {

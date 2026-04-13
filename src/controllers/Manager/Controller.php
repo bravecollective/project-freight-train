@@ -30,6 +30,8 @@
         public $wormholePrice;
         public $pochvenPrice;
         public $minimumPrice;
+        public $maximumPrice;
+        public $minimumRushPremium;
         //Volume Controls
         public $maxVolume;
         public $blockadeRunnerCutoff;
@@ -179,6 +181,50 @@
                                 }
 
                             }
+                            elseif ($_POST["Action"] == "Add_Allowed_Region") {
+
+                                if (isset($_POST["new_region_allowed"]) and $_POST["new_region_allowed"] != "") {
+                                    $this->addOrRemoveAllowed("Add", "Region", $_POST["new_region_allowed"]);
+                                }
+                                else {
+                                    header($_SERVER["SERVER_PROTOCOL"] . " 400 Bad Request");
+                                    $this->errors[] = "Region Failed to Add! No name was sent.";
+                                }
+
+                            }
+                            elseif ($_POST["Action"] == "Remove_Allowed_Region") {
+
+                                if (isset($_POST["old_region_allowed"]) and $_POST["old_region_allowed"] != "") {
+                                    $this->addOrRemoveAllowed("Remove", "Region", $_POST["old_region_allowed"]);
+                                }
+                                else {
+                                    header($_SERVER["SERVER_PROTOCOL"] . " 400 Bad Request");
+                                    $this->errors[] = "Region Failed to Remove! No name was sent.";
+                                }
+
+                            }
+                            elseif ($_POST["Action"] == "Add_Allowed_System") {
+
+                                if (isset($_POST["new_system_allowed"]) and $_POST["new_system_allowed"] != "") {
+                                    $this->addOrRemoveAllowed("Add", "System", $_POST["new_system_allowed"]);
+                                }
+                                else {
+                                    header($_SERVER["SERVER_PROTOCOL"] . " 400 Bad Request");
+                                    $this->errors[] = "System Failed to Add! No name was sent.";
+                                }
+
+                            }
+                            elseif ($_POST["Action"] == "Remove_Allowed_System") {
+
+                                if (isset($_POST["old_system_allowed"]) and $_POST["old_system_allowed"] != "") {
+                                    $this->addOrRemoveAllowed("Remove", "System", $_POST["old_system_allowed"]);
+                                }
+                                else {
+                                    header($_SERVER["SERVER_PROTOCOL"] . " 400 Bad Request");
+                                    $this->errors[] = "System Failed to Remove! No name was sent.";
+                                }
+
+                            }
                             elseif ($_POST["Action"] == "Add_Route") {
 
                                 if (
@@ -188,6 +234,7 @@
                                     and $_POST["route_destination"] != "" 
                                     and isset($_POST["route_price_model"])
                                     and in_array($_POST["route_price_model"], ["Standard", "Fixed", "Range", "Gate"])
+                                    and in_array($_POST["route_allow_rush"], ["No Override", "Allow", "Disallow"])
                                 ) {
                                     $this->addOrRemoveRoute(
                                         "Add", 
@@ -197,11 +244,19 @@
                                         ((isset($_POST["route_price"]) and $_POST["route_price"] != "") ? $_POST["route_price"] : null), 
                                         ((isset($_POST["route_gate_price"]) and $_POST["route_gate_price"] != "") ? $_POST["route_gate_price"] : null), 
                                         ((isset($_POST["route_minimum_price"]) and $_POST["route_minimum_price"] != "") ? $_POST["route_minimum_price"] : null), 
+                                        ((isset($_POST["route_maximum_price"]) and $_POST["route_maximum_price"] != "") ? $_POST["route_maximum_price"] : null), 
+                                        ((isset($_POST["route_minimum_rush_premium"]) and $_POST["route_minimum_rush_premium"] != "") ? $_POST["route_minimum_rush_premium"] : null), 
                                         ((isset($_POST["route_premium"]) and $_POST["route_premium"] != "") ? $_POST["route_premium"] : null), 
                                         ((isset($_POST["route_max_volume"]) and $_POST["route_max_volume"] != "") ? $_POST["route_max_volume"] : null),
                                         ((isset($_POST["route_max_collateral"]) and $_POST["route_max_collateral"] != "") ? $_POST["route_max_collateral"] : null),
                                         isset($_POST["route_disable_high_collateral"]),
-                                        isset($_POST["route_add_inverse"])
+                                        isset($_POST["route_add_inverse"]),
+                                        $_POST["route_allow_rush"], 
+                                        ((isset($_POST["route_contract_expiration"]) and $_POST["route_contract_expiration"] != "") ? $_POST["route_contract_expiration"] : null),
+                                        ((isset($_POST["route_time_to_complete"]) and $_POST["route_time_to_complete"] != "") ? $_POST["route_time_to_complete"] : null),
+                                        ((isset($_POST["route_rush_contract_expiration"]) and $_POST["route_rush_contract_expiration"] != "") ? $_POST["route_rush_contract_expiration"] : null),
+                                        ((isset($_POST["route_rush_time_to_complete"]) and $_POST["route_rush_time_to_complete"] != "") ? $_POST["route_rush_time_to_complete"] : null),
+                                        ((isset($_POST["route_rush_multiplier"]) and $_POST["route_rush_multiplier"] != "") ? $_POST["route_rush_multiplier"] : null)
                                     );
                                 }
                                 else {
@@ -282,6 +337,8 @@
                         maxpochvenvolume, 
                         pochvenprice, 
                         minimumprice,
+                        maximumprice,
+                        minimumrushpremium,
                         collateralpremium,
                         highcollateralcutoff,
                         highcollateralpenalty,
@@ -312,6 +369,8 @@
                         :maxpochvenvolume, 
                         :pochvenprice, 
                         :minimumprice,
+                        :maximumprice,
+                        :minimumrushpremium,
                         :collateralpremium,
                         :highcollateralcutoff,
                         :highcollateralpenalty,
@@ -343,6 +402,8 @@
                 $optionUpdate->bindParam(":maxpochvenvolume", $_POST["maxPochvenVolume"], \PDO::PARAM_INT);
                 $optionUpdate->bindParam(":pochvenprice", $_POST["pochvenPrice"], \PDO::PARAM_INT);
                 $optionUpdate->bindParam(":minimumprice", $_POST["minimumPrice"], \PDO::PARAM_INT);
+                $optionUpdate->bindParam(":maximumprice", $_POST["maximumPrice"], \PDO::PARAM_INT);
+                $optionUpdate->bindParam(":minimumrushpremium", $_POST["minimumRushPremium"], \PDO::PARAM_INT);
                 $optionUpdate->bindParam(":collateralpremium", $_POST["collateralPremium"]);
                 $optionUpdate->bindParam(":highcollateralcutoff", $_POST["highCollateralCutoff"], \PDO::PARAM_INT);
                 $optionUpdate->bindParam(":highcollateralpenalty", $_POST["highCollateralPenalty"], \PDO::PARAM_INT);
@@ -462,6 +523,55 @@
             
         }
 
+        private function addOrRemoveAllowed($action, $type, $name) {
+
+            $id = $this->getLocationID($name, $type);
+
+            if ($action == "Add") {
+                
+                try {
+                    $restrictionAddition = $this->databaseConnection->prepare("INSERT INTO allowedlocations (id, type) VALUES (:id, :type)");
+                    $restrictionAddition->bindParam(":id", $id);
+                    $restrictionAddition->bindParam(":type", $type);
+                    $restrictionAddition->execute();
+
+                    $this->logger->make_log_entry(
+                        logType: "Allowed Location Added",
+                        logDetails: "ID: $id \nType: $type \nName: $name"
+                    );
+                }
+                catch (\Exception $error) {
+                    header($_SERVER["SERVER_PROTOCOL"] . " 400 Bad Request");
+                    $this->errors[] = "Allowed Location Failed to Add! " . $error->getMessage();
+                }
+
+            }
+            elseif ($action == "Remove") {
+                
+                try {
+                    $restrictionRemoval = $this->databaseConnection->prepare("DELETE FROM allowedlocations WHERE id = :id");
+                    $restrictionRemoval->bindParam(":id", $id);
+                    $restrictionRemoval->execute();
+
+                    $this->logger->make_log_entry(
+                        logType: "Allowed Location Removed",
+                        logDetails: "ID: $id \nType: $type \nName: $name"
+                    );
+                }
+                catch (\Exception $error) {
+                    header($_SERVER["SERVER_PROTOCOL"] . " 400 Bad Request");
+                    $this->errors[] = "Allowed Location Failed to Remove! " . $error->getMessage();
+                }
+
+            }
+            else {
+                header($_SERVER["SERVER_PROTOCOL"] . " 500 Internal Server Error");
+                throw new \Exception("An Incorrect Action was Passed.", 11001);
+                return;
+            }
+            
+        }
+
         private function addOrRemoveRoute(
             $action, 
             $origin, 
@@ -470,11 +580,19 @@
             $priceOverride = null, 
             $gatePriceOverride = null, 
             $minimumPriceOverride = null, 
+            $maximumPriceOverride = null, 
+            $minimumRushPremiumOverride = null, 
             $collateralOverride = null, 
             $maxVolumeOverride = null, 
             $maxCollateralOverride = null,
             $disableHighCollateral = false,
-            $addInverse = false
+            $addInverse = false,
+            $allowRushOverride = null,
+            $expirationOverride = null,
+            $timeToCompleteOverride = null,
+            $rushExpirationOverride = null,
+            $rushTimeToCompleteOverride = null,
+            $rushMultiplierOverride = null
         ) {
 
             $originID = $this->getLocationID($origin, "System");
@@ -486,51 +604,91 @@
                     !(is_null($priceOverride) or is_numeric($priceOverride))
                     or !(is_null($gatePriceOverride) or is_numeric($gatePriceOverride))
                     or !(is_null($minimumPriceOverride) or is_numeric($minimumPriceOverride))
+                    or !(is_null($maximumPriceOverride) or is_numeric($maximumPriceOverride))
+                    or !(is_null($minimumRushPremiumOverride) or is_numeric($minimumRushPremiumOverride))
                     or !(is_null($collateralOverride) or is_numeric($collateralOverride))
                     or !(is_null($maxVolumeOverride) or is_numeric($maxVolumeOverride))
                     or !(is_null($maxCollateralOverride) or is_numeric($maxCollateralOverride))
+                    or !(is_null($expirationOverride) or is_numeric($expirationOverride))
+                    or !(is_null($timeToCompleteOverride) or is_numeric($timeToCompleteOverride))
+                    or !(is_null($rushExpirationOverride) or is_numeric($rushExpirationOverride))
+                    or !(is_null($rushTimeToCompleteOverride) or is_numeric($rushTimeToCompleteOverride))
+                    or !(is_null($rushMultiplierOverride) or is_numeric($rushMultiplierOverride))
                 ) {
                     $this->errors[] = "Route Failed to Add! One or more numeric parameters were not numeric.";
                     return;
                 }
 
+                if (
+                    !is_null($minimumPriceOverride)
+                    and !is_null($maximumPriceOverride)
+                    and ((int)$minimumPriceOverride) > ((int)$maximumPriceOverride)
+                ) {
+                    $this->errors[] = "Route Failed to Add! Minimum price was greater than maximum price.";
+                    return;
+                }
+
                 try {
-                    $restrictionAddition = $this->databaseConnection->prepare(
+                    $routeAddition = $this->databaseConnection->prepare(
                         "INSERT INTO routes (
                             start, 
                             end, 
                             basepriceoverride, 
                             gatepriceoverride, 
                             minimumpriceoverride,
+                            maximumpriceoverride,
+                            minimumrushpremiumoverride,
                             pricemodel, 
                             collateralpremiumoverride, 
                             maxvolumeoverride, 
                             maxcollateraloverride,
-                            disablehighcollateral
+                            disablehighcollateral,
+                            allowrushoverride,
+                            contractexpirationoverride,
+                            contracttimetocompleteoverride,
+                            rushcontractexpirationoverride,
+                            rushcontracttimetocompleteoverride,
+                            rushmultiplieroverride
                         ) VALUES (
                             :start, 
                             :end, 
                             :basepriceoverride, 
                             :gatepriceoverride, 
                             :minimumpriceoverride,
+                            :maximumpriceoverride,
+                            :minimumrushpremiumoverride,
                             :pricemodel, 
                             :collateralpremiumoverride, 
                             :maxvolumeoverride, 
                             :maxcollateraloverride,
-                            :disablehighcollateral
+                            :disablehighcollateral,
+                            :allowrushoverride,
+                            :contractexpirationoverride,
+                            :contracttimetocompleteoverride,
+                            :rushcontractexpirationoverride,
+                            :rushcontracttimetocompleteoverride,
+                            :rushmultiplieroverride
                         )"
                     );
-                    $restrictionAddition->bindParam(":start", $originID);
-                    $restrictionAddition->bindParam(":end", $destinationID);
-                    $restrictionAddition->bindParam(":basepriceoverride", $priceOverride);
-                    $restrictionAddition->bindParam(":gatepriceoverride", $gatePriceOverride);
-                    $restrictionAddition->bindParam(":minimumpriceoverride", $minimumPriceOverride);
-                    $restrictionAddition->bindParam(":pricemodel", $priceModel);
-                    $restrictionAddition->bindParam(":collateralpremiumoverride", $collateralOverride);
-                    $restrictionAddition->bindParam(":maxvolumeoverride", $maxVolumeOverride);
-                    $restrictionAddition->bindParam(":maxcollateraloverride", $maxCollateralOverride);
-                    $restrictionAddition->bindValue(":disablehighcollateral", (int)$disableHighCollateral, \PDO::PARAM_INT);
-                    $restrictionAddition->execute();
+                    $routeAddition->bindParam(":start", $originID);
+                    $routeAddition->bindParam(":end", $destinationID);
+                    $routeAddition->bindParam(":basepriceoverride", $priceOverride);
+                    $routeAddition->bindParam(":gatepriceoverride", $gatePriceOverride);
+                    $routeAddition->bindParam(":minimumpriceoverride", $minimumPriceOverride);
+                    $routeAddition->bindParam(":maximumpriceoverride", $maximumPriceOverride);
+                    $routeAddition->bindParam(":minimumrushpremiumoverride", $minimumRushPremiumOverride);
+                    $routeAddition->bindParam(":pricemodel", $priceModel);
+                    $routeAddition->bindParam(":collateralpremiumoverride", $collateralOverride);
+                    $routeAddition->bindParam(":maxvolumeoverride", $maxVolumeOverride);
+                    $routeAddition->bindParam(":maxcollateraloverride", $maxCollateralOverride);
+                    $routeAddition->bindValue(":disablehighcollateral", (int)$disableHighCollateral, \PDO::PARAM_INT);
+                    $routeAddition->bindValue(":allowrushoverride", ($allowRushOverride != "No Override") ? $allowRushOverride : null);
+                    $routeAddition->bindParam(":contractexpirationoverride", $expirationOverride);
+                    $routeAddition->bindParam(":contracttimetocompleteoverride", $timeToCompleteOverride);
+                    $routeAddition->bindParam(":rushcontractexpirationoverride", $rushExpirationOverride);
+                    $routeAddition->bindParam(":rushcontracttimetocompleteoverride", $rushTimeToCompleteOverride);
+                    $routeAddition->bindParam(":rushmultiplieroverride", $rushMultiplierOverride);
+                    $routeAddition->execute();
 
                     $this->logger->make_log_entry(
                         logType: "Route Added",
@@ -545,42 +703,66 @@
                 if ($addInverse) {
 
                     try {
-                        $restrictionAddition = $this->databaseConnection->prepare(
+                        $routeAddition = $this->databaseConnection->prepare(
                             "INSERT INTO routes (
                                 start, 
                                 end, 
                                 basepriceoverride, 
                                 gatepriceoverride, 
                                 minimumpriceoverride,
+                                maximumpriceoverride,
+                                minimumrushpremiumoverride,
                                 pricemodel, 
                                 collateralpremiumoverride, 
                                 maxvolumeoverride, 
                                 maxcollateraloverride,
-                                disablehighcollateral
+                                disablehighcollateral,
+                                allowrushoverride,
+                                contractexpirationoverride,
+                                contracttimetocompleteoverride,
+                                rushcontractexpirationoverride,
+                                rushcontracttimetocompleteoverride,
+                                rushmultiplieroverride
                             ) VALUES (
                                 :start, 
                                 :end, 
                                 :basepriceoverride, 
                                 :gatepriceoverride, 
                                 :minimumpriceoverride,
+                                :maximumpriceoverride,
+                                :minimumrushpremiumoverride,
                                 :pricemodel, 
                                 :collateralpremiumoverride, 
                                 :maxvolumeoverride, 
                                 :maxcollateraloverride,
-                                :disablehighcollateral
+                                :disablehighcollateral,
+                                :allowrushoverride,
+                                :contractexpirationoverride,
+                                :contracttimetocompleteoverride,
+                                :rushcontractexpirationoverride,
+                                :rushcontracttimetocompleteoverride,
+                                :rushmultiplieroverride
                             )"
                         );
-                        $restrictionAddition->bindParam(":start", $destinationID);
-                        $restrictionAddition->bindParam(":end", $originID);
-                        $restrictionAddition->bindParam(":basepriceoverride", $priceOverride);
-                        $restrictionAddition->bindParam(":gatepriceoverride", $gatePriceOverride);
-                        $restrictionAddition->bindParam(":minimumpriceoverride", $minimumPriceOverride);
-                        $restrictionAddition->bindParam(":pricemodel", $priceModel);
-                        $restrictionAddition->bindParam(":collateralpremiumoverride", $collateralOverride);
-                        $restrictionAddition->bindParam(":maxvolumeoverride", $maxVolumeOverride);
-                        $restrictionAddition->bindParam(":maxcollateraloverride", $maxCollateralOverride);
-                        $restrictionAddition->bindValue(":disablehighcollateral", (int)$disableHighCollateral, \PDO::PARAM_INT);
-                        $restrictionAddition->execute();
+                        $routeAddition->bindParam(":start", $destinationID);
+                        $routeAddition->bindParam(":end", $originID);
+                        $routeAddition->bindParam(":basepriceoverride", $priceOverride);
+                        $routeAddition->bindParam(":gatepriceoverride", $gatePriceOverride);
+                        $routeAddition->bindParam(":minimumpriceoverride", $minimumPriceOverride);
+                        $routeAddition->bindParam(":maximumpriceoverride", $maximumPriceOverride);
+                        $routeAddition->bindParam(":minimumrushpremiumoverride", $minimumRushPremiumOverride);
+                        $routeAddition->bindParam(":pricemodel", $priceModel);
+                        $routeAddition->bindParam(":collateralpremiumoverride", $collateralOverride);
+                        $routeAddition->bindParam(":maxvolumeoverride", $maxVolumeOverride);
+                        $routeAddition->bindParam(":maxcollateraloverride", $maxCollateralOverride);
+                        $routeAddition->bindValue(":disablehighcollateral", (int)$disableHighCollateral, \PDO::PARAM_INT);
+                        $routeAddition->bindValue(":allowrushoverride", ($allowRushOverride != "No Override") ? $allowRushOverride : null);
+                        $routeAddition->bindParam(":contractexpirationoverride", $expirationOverride);
+                        $routeAddition->bindParam(":contracttimetocompleteoverride", $timeToCompleteOverride);
+                        $routeAddition->bindParam(":rushcontractexpirationoverride", $rushExpirationOverride);
+                        $routeAddition->bindParam(":rushcontracttimetocompleteoverride", $rushTimeToCompleteOverride);
+                        $routeAddition->bindParam(":rushmultiplieroverride", $rushMultiplierOverride);
+                        $routeAddition->execute();
 
                         $this->logger->make_log_entry(
                             logType: "Route Added",
@@ -713,6 +895,8 @@
                 $this->wormholePrice = $optionData["wormholeprice"];
                 $this->pochvenPrice = $optionData["pochvenprice"];
                 $this->minimumPrice = $optionData["minimumprice"];
+                $this->maximumPrice = $optionData["maximumprice"];
+                $this->minimumRushPremium = $optionData["minimumrushpremium"];
                 //Volume Controls
                 $this->maxVolume = $optionData["maxvolume"];
                 $this->blockadeRunnerCutoff = $optionData["blockaderunnercutoff"];

@@ -85,9 +85,21 @@
                     $allowedClasses = implode(", ", $allowedClassList);
 
                     $queryString = "SELECT name FROM evesystems WHERE 
+                    id IN (
+                        SELECT DISTINCT start FROM routes
+                        UNION
+                        SELECT DISTINCT end FROM routes
+                    )
+                    OR (
                         class IN ($allowedClasses) 
+                        AND (
+                            NOT EXISTS (SELECT id FROM allowedlocations)
+                            OR id IN (SELECT id FROM allowedlocations WHERE type = 'System') 
+                            OR regionid IN (SELECT id FROM allowedlocations WHERE type = 'Region')
+                        )
                         AND id NOT IN (SELECT id FROM restrictedlocations WHERE type = 'System') 
-                        AND regionid NOT IN (SELECT id FROM restrictedlocations WHERE type = 'Region')";
+                        AND regionid NOT IN (SELECT id FROM restrictedlocations WHERE type = 'Region')
+                    );";
 
                 }
 

@@ -72,6 +72,14 @@
                     $this->updateGroup($_POST["Type"], $_POST["ID"], $_POST["Change"], $_POST["Role"]);
 
                 }
+                elseif (
+                    $_POST["Action"] == "Set_Source"
+                    and isset($_POST["ID"])
+                ){
+
+                    $this->setSource($_POST["ID"]);
+
+                }
                 else {
 
                     header($_SERVER["SERVER_PROTOCOL"] . " 400 Bad Request");
@@ -351,6 +359,56 @@
 
                 header($_SERVER["SERVER_PROTOCOL"] . " 400 Bad Request");
                 throw new \Exception("A change was requested using an invalid role.", 12008);
+
+            }
+
+        }
+
+        private function setSource($id) {
+
+            if ($id == 0) {
+
+                $updateQuery = $this->databaseConnection->prepare("UPDATE sourcecharacters SET status=:status");
+                $updateQuery->bindValue(":status", "Inactive");
+                $updateQuery->execute();
+
+                $this->logger->make_log_entry(logType: "Source Character Set", logDetails: "The source character has been unset.");
+
+                echo json_encode(["Status" => "Success"]);
+                return;
+
+            }
+
+            $checkQuery = $this->databaseConnection->prepare("SELECT * FROM sourcecharacters WHERE id=:id");
+            $checkQuery->bindParam(":id", $id, \PDO::PARAM_INT);
+            $checkQuery->execute();
+            $checkData = $checkQuery->fetch();
+
+            if (!empty($checkData)) {
+
+                // We need to wrap these steps in a transaction to prevent race conditions
+                $this->databaseConnection->beginTransaction();
+
+                $updateQuery = $this->databaseConnection->prepare("UPDATE sourcecharacters SET status=:status");
+                $updateQuery->bindValue(":status", "Inactive");
+                $updateQuery->execute();
+
+                $updateQuery = $this->databaseConnection->prepare("UPDATE sourcecharacters SET status=:status WHERE id=:id");
+                $updateQuery->bindValue(":status", "Active");
+                $updateQuery->bindParam(":id", $id, \PDO::PARAM_INT);
+                $updateQuery->execute();
+
+                $this->databaseConnection->commit();
+
+                $this->logger->make_log_entry(logType: "Source Character Set", logDetails: "The source character ID has been set to " . $id . ".");
+
+                echo json_encode(["Status" => "Success"]);
+
+            }
+            else {
+
+                header($_SERVER["SERVER_PROTOCOL"] . " 404 Not Found");
+                throw new \Exception("The selected source character does not exist.", 12009);
 
             }
 

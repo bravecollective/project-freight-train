@@ -3,9 +3,9 @@ ClientID =
 ;When Using Environment Variables: ENV_FREIGHT_EVE_CLIENT_ID - (REQUIRED)
 ClientSecret =
 ;When Using Environment Variables: ENV_FREIGHT_EVE_CLIENT_SECRET - (REQUIRED)
-ClientScopes = esi-search.search_structures.v1
-;When Using Environment Variables: ENV_FREIGHT_EVE_CLIENT_SCOPES - (DEFAULT "esi-search.search_structures.v1")
-;Client Scopes is a string of space-separated scopes that are used for relay characters. This site requires: esi-search.search_structures.v1
+ClientScopes = esi-search.search_structures.v1 esi-contracts.read_corporation_contracts.v1 esi-universe.read_structures.v1
+;When Using Environment Variables: ENV_FREIGHT_EVE_CLIENT_SCOPES - (DEFAULT "esi-search.search_structures.v1 esi-contracts.read_corporation_contracts.v1 esi-universe.read_structures.v1")
+;Client Scopes is a string of space-separated scopes that are used for relay characters. This site requires: esi-search.search_structures.v1 esi-contracts.read_corporation_contracts.v1 esi-universe.read_structures.v1
 DefaultScopes = esi-search.search_structures.v1
 ;When Using Environment Variables: ENV_FREIGHT_EVE_DEFAULT_SCOPES - (DEFAULT "esi-search.search_structures.v1")
 ;Default Scopes is a string a space-separated scopes required for the web app's default login process. 'esi-search.search_structures.v1' is required for ESI search functionality.

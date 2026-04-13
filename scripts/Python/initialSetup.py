@@ -151,12 +151,15 @@ try:
             wormholeprice, 
             maxpochvenvolume, 
             pochvenprice, 
+            minimumprice,
+            maximumprice,
+            minimumrushpremium,
             collateralpremium,
             highcollateralcutoff,
             highcollateralpenalty,
             highcollateralblockaderunnerpenalty
         ) VALUES (
-            'CCP Alliance', 0, 0, 1, 1, 1, 1, 1, 7, 3, 3, 1, 1.5, 2, 320000, 10000000000, 13000, 1000, 1000000, 10, 40000, 1500, 40000, 2000, 0.25, 3000000000, 50000000, 10000000)"""
+            'CCP Alliance', 0, 0, 1, 1, 1, 1, 1, 7, 3, 3, 1, 1.5, 2, 320000, 10000000000, 13000, 1000, 1000000, 10, 40000, 1500, 40000, 2000, 1000000, 1000000000, 5000000, 0.25, 3000000000, 50000000, 10000000)"""
         updateCursor.execute(optionsUpdate)
     else:
         print("[{Time}] Default Options were not added due to Options already being present.".format(Time=getTimeMark()))

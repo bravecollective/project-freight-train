@@ -44,7 +44,18 @@
     );
     
     
-    
+
+    $this->registerPage(
+        linkToUse: "hauling",
+        nameToUse: "Hauling Dashboard",
+        codeToUse: "Hauling",
+        useModel: true,
+        useController: true,
+        inNav: true,
+        loginRequired: true, 
+        accessRoles: ["Hauler", "Manager", "Super Admin"]
+    );
+
     $this->registerPage(
         linkToUse: "manager",
         nameToUse: "Route Manager",

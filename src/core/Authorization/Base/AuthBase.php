@@ -282,6 +282,12 @@
                                         $this->loginSuccess($accessCharacterID);
 
                                     }
+                                    elseif ($loginData["Type"] === "Source") {
+
+                                        self::addSourceCharacter($accessCharacterID);
+                                        self::loginSuccess($accessCharacterID);
+
+                                    }
                                     else {
 
                                         self::loginSuccess($accessCharacterID);
@@ -426,6 +432,49 @@
             else {
 
                 throw new \Exception("Failed to query database while trying to refresh a token.", 101);
+
+            }
+
+        }
+
+        private function addSourceCharacter($characterID) {
+
+            $insertQuery = $this->authorizationConnection->prepare("REPLACE INTO sourcecharacters (id, status) VALUES (:id, :status)");
+            $insertQuery->bindParam(":id", $characterID);
+            $insertQuery->bindValue(":status", "Inactive");
+            $insertQuery->execute();
+
+        }
+
+        public function updateSourceCharacters($fromScript = false) {
+
+            $logEntryPage = ($fromScript) ? "" : null;
+            $logEntryActor = ($fromScript) ? "[Update Script]" : null;
+
+            $checkQuery = $this->authorizationConnection->prepare("SELECT * FROM sourcecharacters");
+            $checkQuery->execute();
+
+            while ($eachSource = $checkQuery->fetch(\PDO::FETCH_ASSOC)) {
+
+                try {
+                
+                    $this->getAccessToken("Source", $eachSource["id"]);
+
+                }
+                catch (\Exception $exception) {
+
+                    if ($eachSource["status"] != "Invalid") {
+
+                        $updateQuery = $this->authorizationConnection->prepare("UPDATE sourcecharacters SET status=:status WHERE id=:id");
+                        $updateQuery->bindValue(":status", "Invalid");
+                        $updateQuery->bindParam(":id", $eachSource["id"]);
+                        $updateQuery->execute();
+
+                        $this->authorizationLogger->make_log_entry(logType: "Source Character Went Invalid", logPage: $logEntryPage, logActor: $logEntryActor, logDetails: "Source character with ID " . $eachSource["id"] . " and status " . $eachSource["status"] .  " had their token go invalid.");
+
+                    }
+
+                }
 
             }
 

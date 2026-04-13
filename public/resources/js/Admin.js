@@ -44,6 +44,14 @@ jQuery(document).ready(function () {
         
     });
     
+    $(document).on("change", ".source_character_selector", function () {
+        
+        setSource(
+            $(this).val()
+        );
+        
+    });
+
 });
 
 function removeEmptySections() {
@@ -314,6 +322,35 @@ function updateGroup(type, id, role, switch_id) {
         success: function(result) {
             
             $("#" + switch_id).prop("disabled", false);
+            
+        },
+        error: function(result) {
+            
+            
+            
+        }
+    });
+    
+}
+
+function setSource(id) {
+    
+    $(".source_character_selector").prop("disabled", true);
+    
+    dataObject = {
+        "Action": "Set_Source", 
+        "ID": id
+    };
+    
+    $.ajax({
+        url: "/admin/?core_action=api",
+        type: "POST",
+        data: dataObject,
+        mimeType: "application/json",
+        dataType: "json",
+        success: function(result) {
+            
+            $(".source_character_selector").prop("disabled", false);
             
         },
         error: function(result) {

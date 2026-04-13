@@ -31,8 +31,18 @@
         "Tier Removed",
         "Restriction Added", 
         "Restriction Removed",
+        "Allowed Location Added", 
+        "Allowed Location Removed",
         "Route Added", 
         "Route Removed"
+    );
+
+    $siteLogger->register(
+        "source_characters", 
+        "Source Characters", 
+        "Source Character Set",
+        "Source Character Added",
+        "Source Character Went Invalid"
     );
 
 ?>

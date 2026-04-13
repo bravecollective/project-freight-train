@@ -1,3 +1,54 @@
+# Major Version Update Truck – 0 – 0
+
+## Features
+- Added a `Hauling Dashboard`
+    - Shows all outstanding contracts
+    - Runs each contract against the calculator and displays any issues
+    - Login accessible on the dashboard, and source character configured on the `Admin` page
+        - Added an update script `UpdateSourceCharacters.php` to keep track of token validity
+- Added maximum price and minimum rush premium options, with route-specific overrides.
+- A combination of allowed and restricted locations is now configurable
+    - A blank allowlist allows all systems
+- Route-specific overrides added for expiration, time-to-complete, their rush equivalents, the allowed use of the rush option, and the rush multiplier. 
+    - The rush switch will now only be hidden if the option is disabled, and no routes with an `Allow` override exist.
+
+## Bugfixes
+- Highsec-Highsec restrictions are no longer applied to defined routes
+- Various bugfixes and cleanup of code involving parsing of route options in the calculator
+- Added minimum price (as well as new options in this version) to the `initialSetup.py` script.
+- The hash used for checking the ESI Cache now uses the Subject rather than the Access Token for authenticated requests.
+
+## Code Changes
+- Calculator logic has been moved from the `Home` controller to a dedicated `Calculator` object
+
+## ESI
+- Changed versioning scheme to the new `X-Compatibility-Date`
+- Fixed deprecated implicitly nullable argument in `Ridley\Objects\ESI\Base`
+- ESI Handler now exposes Status Code and Response Headers for ESI Requests
+- Updated the `/route/{origin_system_id}/{destination_system_id}` endpoint
+
+## Database
+- The `restrictedlocations` `type` column now use an ENUM
+
+### UPDATE INSTRUCTIONS (From Version Pickup – 0 – *)
+
+1. Pause operation of the webserver.
+2. Add the `esi-contracts.read_corporation_contracts.v1` and `esi-universe.read_structures.v1` scopes to your Eve Application.
+3. Execute the following SQL Commands:
+    - > ALTER TABLE options ADD maximumprice BIGINT;
+    - > ALTER TABLE options ADD minimumrushpremium BIGINT;
+    - > ALTER TABLE restrictedlocations MODIFY type ENUM('System', 'Region');
+    - > ALTER TABLE routes ADD maximumpriceoverride BIGINT;
+    - > ALTER TABLE routes ADD minimumrushpremiumoverride BIGINT;
+    - > ALTER TABLE routes ADD allowrushoverride ENUM('Allow', 'Disallow');
+    - > ALTER TABLE routes ADD contractexpirationoverride TINYINT;
+    - > ALTER TABLE routes ADD contracttimetocompleteoverride TINYINT;
+    - > ALTER TABLE routes ADD rushcontractexpirationoverride TINYINT;
+    - > ALTER TABLE routes ADD rushcontracttimetocompleteoverride TINYINT;
+    - > ALTER TABLE routes ADD rushmultiplieroverride NUMERIC(8,4);
+4. Sync up files with the repository.
+5. Restart operation of the webserver.
+
 # Minor Version Update Pickup – 1 – 0
 
 ## Features

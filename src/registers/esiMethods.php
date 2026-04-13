@@ -33,9 +33,27 @@
     );
     
     $this->register(
-        endpoint: "/route/{origin}/{destination}/",
+        endpoint: "/corporations/{corporation_id}/contracts/",
+        method: "corporation_contracts",
+        requiredArguments: ["corporation_id"]
+    );
+
+    $this->register(
+        endpoint: "/universe/structures/{structure_id}/",
+        method: "structures",
+        requiredArguments: ["structure_id"]
+    );
+
+    $this->register(
+        endpoint: "/universe/stations/{station_id}/",
+        method: "stations",
+        requiredArguments: ["station_id"]
+    );
+
+    $this->register(
+        endpoint: "/route/{origin_system_id}/{destination_system_id}/",
         method: "route",
-        requiredArguments: ["origin", "destination"]
+        requiredArguments: ["origin_system_id", "destination_system_id"]
     );
 
 ?>

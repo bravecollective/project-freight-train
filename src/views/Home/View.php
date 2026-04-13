@@ -44,7 +44,7 @@
                 </div>
                 <div class="col-lg-2 mt-3">
 
-                    <?php if ($this->controller->allowRush): ?>
+                    <?php if ($this->controller->showRushButton): ?>
 
                         <div class="form-check form-switch" style="margin-top: 2.5rem !important;">
                             <input class="form-check-input" type="checkbox" role="switch" name="rush" id="rush" value="true" <?php echo isset($_POST["rush"]) ? "checked" : ""; ?>>
@@ -169,7 +169,7 @@
                 <li class="list-group-item bg-dark text-light">
                     <div class="row">
                         <div class="col-lg-7 fw-bold">
-                            <?php echo htmlspecialchars($eachRoute["Start"]); ?> → <?php echo htmlspecialchars($eachRoute["End"]); ?>
+                            <a href="#" class="route-link text-info" style="text-decoration: none;" data-route-start="<?php echo htmlspecialchars($eachRoute["Start"]); ?>" data-route-end="<?php echo htmlspecialchars($eachRoute["End"]); ?>"><?php echo htmlspecialchars($eachRoute["Start"]); ?> → <?php echo htmlspecialchars($eachRoute["End"]); ?></a>
                         </div>
                         <div class="col-lg-4">
                             <?php echo htmlspecialchars($eachRoute["Model"]) . " Pricing"; ?>
@@ -189,72 +189,75 @@
 
         protected function resultsTemplate() {
 
-            if ($this->controller->quoteProcessed) :
-            ?>
-            
-            <div class="row justify-content-center mt-2">
-                <div class="col-lg-6">
-                    <div class="card text-white bg-dark mt-4 border-secondary">
-                        <div class="card-body">
-                            <div class="row">
-                                <div class="col-lg-6 ps-4 border-end border-secondary">
-                                    <h3 class="card-title mt-3">Hauling Quote</h3>
+            if ($this->controller->quote_requested and $this->controller->quote->valid) :
+                $quote = $this->controller->quote;
+                ?>
+                
+                <div class="row justify-content-center mt-2">
+                    <div class="col-lg-6">
+                        <div class="card text-white bg-dark mt-4 border-secondary">
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-lg-6 ps-4 border-end border-secondary">
+                                        <h3 class="card-title mt-3">Hauling Quote</h3>
 
-                                    <p class="mt-3">
-                                        <b class="text-muted">Contract To — </b> <?php echo htmlspecialchars($this->controller->contractCorporation); ?>
-                                         <a data-copy-value="<?php echo htmlspecialchars($this->controller->contractCorporation); ?>" class="bi bi-clipboard2 copy-out text-muted" data-bs-toggle="popover" data-bs-placement="right" title="Copied!"></a><br>
-                                        <b class="text-muted">Destination — </b> <?php echo htmlspecialchars($this->controller->destinationString); ?>
-                                         <a data-copy-value="<?php echo htmlspecialchars($this->controller->destinationString); ?>" class="bi bi-clipboard2 copy-out text-muted" data-bs-toggle="popover" data-bs-placement="right" title="Copied!"></a><br>
-                                        <b class="text-muted">Reward — </b> <?php echo htmlspecialchars($this->controller->priceString) . " ISK"; ?>
-                                         <a data-copy-value="<?php echo htmlspecialchars(str_replace(",", "", $this->controller->priceString)); ?>" class="bi bi-clipboard2 copy-out text-muted" data-bs-toggle="popover" data-bs-placement="right" title="Copied!"></a><br>
-                                        <b class="text-muted">Collateral — </b> <?php echo htmlspecialchars($this->controller->collateralString) . " ISK"; ?>
-                                         <a data-copy-value="<?php echo htmlspecialchars(str_replace(",", "", $this->controller->collateralString)); ?>" class="bi bi-clipboard2 copy-out text-muted" data-bs-toggle="popover" data-bs-placement="right" title="Copied!"></a><br>
-                                        <b class="text-muted">Expiration — </b> <?php echo htmlspecialchars($this->controller->expirationString) . " Days"; ?>
-                                         <a data-copy-value="<?php echo htmlspecialchars($this->controller->expirationString); ?>" class="bi bi-clipboard2 copy-out text-muted" data-bs-toggle="popover" data-bs-placement="right" title="Copied!"></a><br>
-                                        <b class="text-muted">Time to Complete — </b> <?php echo htmlspecialchars($this->controller->timeToCompleteString) . " Days"; ?>
-                                         <a data-copy-value="<?php echo htmlspecialchars($this->controller->timeToCompleteString); ?>" class="bi bi-clipboard2 copy-out text-muted" data-bs-toggle="popover" data-bs-placement="right" title="Copied!"></a><br>
-                                    </p>
+                                        <p class="mt-3">
+                                            <b class="text-muted">Contract To — </b> <?php echo htmlspecialchars($quote->contractCorporation); ?>
+                                            <a data-copy-value="<?php echo htmlspecialchars($quote->contractCorporation); ?>" class="bi bi-clipboard2 copy-out text-muted" data-bs-toggle="popover" data-bs-placement="right" title="Copied!"></a><br>
+                                            <b class="text-muted">Destination — </b> <?php echo htmlspecialchars($quote->destinationString); ?>
+                                            <a data-copy-value="<?php echo htmlspecialchars($quote->destinationString); ?>" class="bi bi-clipboard2 copy-out text-muted" data-bs-toggle="popover" data-bs-placement="right" title="Copied!"></a><br>
+                                            <b class="text-muted">Reward — </b> <?php echo htmlspecialchars(($quote->useRush) ? $quote->rushPriceString : $quote->standardPriceString) . " ISK"; ?>
+                                            <a data-copy-value="<?php echo htmlspecialchars(str_replace(",", "", ($quote->useRush) ? $quote->rushPriceString : $quote->standardPriceString)); ?>" class="bi bi-clipboard2 copy-out text-muted" data-bs-toggle="popover" data-bs-placement="right" title="Copied!"></a><br>
+                                            <b class="text-muted">Collateral — </b> <?php echo htmlspecialchars($quote->collateralString) . " ISK"; ?>
+                                            <a data-copy-value="<?php echo htmlspecialchars(str_replace(",", "", $quote->collateralString)); ?>" class="bi bi-clipboard2 copy-out text-muted" data-bs-toggle="popover" data-bs-placement="right" title="Copied!"></a><br>
+                                            <b class="text-muted">Expiration — </b> <?php echo htmlspecialchars(($quote->useRush) ? $quote->rushExpiration : $quote->standardExpiration) . " Days"; ?>
+                                            <a data-copy-value="<?php echo htmlspecialchars(($quote->useRush) ? $quote->rushExpiration : $quote->standardExpiration); ?>" class="bi bi-clipboard2 copy-out text-muted" data-bs-toggle="popover" data-bs-placement="right" title="Copied!"></a><br>
+                                            <b class="text-muted">Time to Complete — </b> <?php echo htmlspecialchars(($quote->useRush) ? $quote->rushTimeToComplete : $quote->standardTimeToComplete) . " Days"; ?>
+                                            <a data-copy-value="<?php echo htmlspecialchars(($quote->useRush) ? $quote->rushTimeToComplete : $quote->standardTimeToComplete); ?>" class="bi bi-clipboard2 copy-out text-muted" data-bs-toggle="popover" data-bs-placement="right" title="Copied!"></a><br>
+                                        </p>
 
-                                </div>
-                                <div class="col-lg-6 ps-4"> 
-                                    <h3 class="card-title mt-3">Price Breakdown</h3>
-                                    <p class="mt-3 mb-0">
-                                        <b class="text-muted">Price Model — </b> <?php echo htmlspecialchars($this->controller->priceModel); ?><br>
-                                        <b class="text-muted">Unit Price — </b> <?php echo htmlspecialchars($this->controller->unitPriceString); ?><br>
-                                        <b class="text-muted">Collateral Premium — </b> <?php echo htmlspecialchars($this->controller->collateralPremiumString); ?><br>
-                                        <b class="text-muted">Penalties:</b>
-                                        <div class="ms-4">
-                                            <?php 
-                                                foreach ($this->controller->penalties as $eachType => $eachValue) {
-                                                    ?>
-                                                    <?php echo htmlspecialchars($eachType); ?>: <?php echo htmlspecialchars($eachValue); ?><br>
-                                                    <?php
-                                                }
-                                            ?>
-                                        </div>
-                                    </p>
+                                    </div>
+                                    <div class="col-lg-6 ps-4"> 
+                                        <h3 class="card-title mt-3">Price Breakdown</h3>
+                                        <p class="mt-3 mb-0">
+                                            <b class="text-muted">Price Model — </b> <?php echo htmlspecialchars($quote->priceModel); ?><br>
+                                            <b class="text-muted">Unit Price — </b> <?php echo htmlspecialchars($quote->unitPriceString); ?><br>
+                                            <b class="text-muted">Collateral Premium — </b> <?php echo htmlspecialchars($quote->collateralPremiumString); ?><br>
+                                            <b class="text-muted">Penalties:</b>
+                                            <div class="ms-4">
+                                                <?php 
+                                                    foreach ($quote->penalties as $eachType => $eachValue) {
+                                                        ?>
+                                                        <?php echo htmlspecialchars($eachType); ?>: <?php echo htmlspecialchars($eachValue); ?><br>
+                                                        <?php
+                                                    }
+                                                ?>
+                                            </div>
+                                        </p>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
-            
-            <?php
+                
+                <?php
             endif;
         }
 
         protected function errorTemplate() {
             
-            foreach ($this->controller->errors as $eachError) {
-            ?>
+            if ($this->controller->quote_requested) {
+                foreach ($this->controller->quote->errors as $eachError) {
+                ?>
 
-                <div class="alert alert-danger d-flex align-items-center mt-3" role="alert">
-                    <i class="bi bi-exclamation-circle me-2"></i>
-                    <div><?php echo htmlspecialchars($eachError); ?></div>
-                </div>
+                    <div class="alert alert-danger d-flex align-items-center mt-3" role="alert">
+                        <i class="bi bi-exclamation-circle me-2"></i>
+                        <div><?php echo htmlspecialchars($eachError); ?></div>
+                    </div>
 
-            <?php
+                <?php
+                }
             }
             
         }

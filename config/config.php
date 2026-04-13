@@ -44,7 +44,7 @@
         //EVE AUTHENTICATION CONFIGURATION
         $configVariables["Client ID"] = $ENVS["ENV_FREIGHT_EVE_CLIENT_ID"];
         $configVariables["Client Secret"] = $ENVS["ENV_FREIGHT_EVE_CLIENT_SECRET"];
-        $configVariables["Client Scopes"] = $ENVS["ENV_FREIGHT_EVE_CLIENT_SCOPES"] ?? "esi-search.search_structures.v1";
+        $configVariables["Client Scopes"] = $ENVS["ENV_FREIGHT_EVE_CLIENT_SCOPES"] ?? "esi-search.search_structures.v1 esi-contracts.read_corporation_contracts.v1 esi-universe.read_structures.v1";
         $configVariables["Default Scopes"] = $ENVS["ENV_FREIGHT_EVE_DEFAULT_SCOPES"] ?? "esi-search.search_structures.v1";
         $configVariables["Client Redirect"] = $ENVS["ENV_FREIGHT_EVE_CLIENT_REDIRECT"];
         $configVariables["Auth Type"] = $ENVS["ENV_FREIGHT_EVE_AUTH_TYPE"] ?? "Neucore";

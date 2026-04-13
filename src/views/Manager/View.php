@@ -28,14 +28,16 @@
                     <table class="table table-dark align-middle text-start text-wrap small mt-4">
                         <thead class="p-4">
                             <tr class="align-middle">
-                                <th scope="col" style="width: 15%;">Start</th>
-                                <th scope="col" style="width: 15%;">End</th>
-                                <th scope="col" style="width: 10%;">Model</th>
-                                <th scope="col" style="width: 15%;">Price<br>(Gate Price)<br>[Minimum Price]</th>
+                                <th scope="col" style="width: 11%;">Start</th>
+                                <th scope="col" style="width: 11%;">End</th>
+                                <th scope="col" style="width: 7.5%;">Model</th>
+                                <th scope="col" style="width: 12%;">Rush?<br>( Multiplier )<br>[ Min Premium ]</th>
+                                <th scope="col" style="width: 12.5%;">( Expiration )<br>[ TTC ]<br>(( Rush Expiration ))<br>[[ Rush TTC ]]</th>
+                                <th scope="col" style="width: 13.5%;">Price<br>( Gate Price )<br>[ Min Price ]<br>[[ Max Price ]]</th>
                                 <th scope="col" style="width: 10%;">Premium</th>
-                                <th scope="col" style="width: 12.5%;">Max Volume</th>
-                                <th scope="col" style="width: 15%;">Max Collateral</th>
-                                <th scope="col" style="width: 7.5%;"></th>
+                                <th scope="col" style="width: 8.5%;">Max Volume</th>
+                                <th scope="col" style="width: 12%;">Max Collateral</th>
+                                <th scope="col" style="width: 2%;"></th>
                             </tr>
                         </thead>
                         <tbody>
@@ -63,6 +65,41 @@
                         <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($this->csrfToken); ?>">
                         <button type="submit" name="Action" value="Add_Tier" class="btn btn-primary">+</button>
                     </form>
+
+                    <div class="row text-light">
+                        <div class="col-xl-6">
+
+                            <h3 class="mt-3">Allowed Regions</h3>
+
+                            <ul class="list-group" style="margin-top: 2rem !important;">
+
+                                <?php $this->regionAllowedLister(); ?>
+
+                            </ul>
+                            <form method="post" action="/manager/" class="input-group mt-3 mb-3">
+                                <input type="text" name="new_region_allowed" id="new_region_allowed" class="form-control" placeholder="Region Name">
+                                <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($this->csrfToken); ?>">
+                                <button type="submit" name="Action" value="Add_Allowed_Region" class="btn btn-primary">+</button>
+                            </form>
+
+                        </div>
+                        <div class="col-xl-6">
+
+                            <h3 class="mt-3">Allowed Systems</h3>
+
+                            <ul class="list-group" style="margin-top: 2rem !important;">
+
+                                <?php $this->systemAllowedLister(); ?>
+
+                            </ul>
+                            <form method="post" action="/manager/" class="input-group mt-3 mb-3">
+                                <input type="text" name="new_system_allowed" id="new_system_allowed" class="form-control" placeholder="System Name">
+                                <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($this->csrfToken); ?>">
+                                <button type="submit" name="Action" value="Add_Allowed_System" class="btn btn-primary">+</button>
+                            </form>
+
+                        </div>
+                    </div>
 
                     <div class="row text-light">
                         <div class="col-xl-6">
@@ -169,6 +206,12 @@
                     <label for="minimumPrice" class="form-label mt-3">Minimum Price</label>
                     <div class="input-group">
                         <input type="text" class="form-control" value="<?php echo htmlspecialchars($this->controller->minimumPrice); ?>" name="minimumPrice" id="minimumPrice" required>
+                        <span class="input-group-text">ISK</span>
+                    </div>
+
+                    <label for="maximumPrice" class="form-label mt-3">Maximum Price</label>
+                    <div class="input-group">
+                        <input type="text" class="form-control" value="<?php echo htmlspecialchars($this->controller->maximumPrice); ?>" name="maximumPrice" id="maximumPrice" required>
                         <span class="input-group-text">ISK</span>
                     </div>
 
@@ -286,6 +329,12 @@
                         <span class="input-group-text">×</span>
                     </div>
 
+                    <label for="minimumRushPremium" class="form-label mt-3">Minimum Rush Premium</label>
+                    <div class="input-group">
+                        <input type="text" class="form-control" value="<?php echo htmlspecialchars($this->controller->minimumRushPremium); ?>" name="minimumRushPremium" id="minimumRushPremium" required>
+                        <span class="input-group-text">ISK</span>
+                    </div>
+
                     <label for="nonstandardMultiplier" class="form-label mt-3">Non-Standard Route Multiplier</label>
                     <div class="input-group">
                         <input type="text" class="form-control" value="<?php echo htmlspecialchars($this->controller->nonstandardMultiplier); ?>" name="nonstandardMultiplier" id="nonstandardMultiplier" required>
@@ -339,6 +388,56 @@
                     </div>
                 </li>
                 
+            <?php
+            }
+
+        }
+
+        protected function regionAllowedLister() {
+
+            foreach ($this->model->regionAllowed as $eachAllowed) {
+            ?>
+
+                <li class="list-group-item bg-dark text-light">
+                    <div class="row">
+                        <div class="col-xl-9 pt-2 pb-1">
+                            <?php echo htmlspecialchars($eachAllowed); ?>
+                        </div>
+                        <div class="col-xl-3 d-flex justify-content-end pe-1">
+                            <form method="post" action="/manager/">
+                                <input type="hidden" name="old_region_allowed" value="<?php echo htmlspecialchars($eachAllowed); ?>"> 
+                                <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($this->csrfToken); ?>">
+                                <button type="submit" name="Action" value="Remove_Allowed_Region" class="btn btn-danger"><i class="bi bi-trash"></i></button>
+                            </form>
+                        </div>
+                    </div>
+                </li>
+                
+            <?php
+            }
+
+        }
+
+        protected function systemAllowedLister() {
+
+            foreach ($this->model->systemAllowed as $eachAllowed) {
+            ?>
+
+                <li class="list-group-item bg-dark text-light">
+                    <div class="row">
+                        <div class="col-xl-9 pt-2 pb-1">
+                            <?php echo htmlspecialchars($eachAllowed); ?>
+                        </div>
+                        <div class="col-xl-3 d-flex justify-content-end pe-1">
+                            <form method="post" action="/manager/">
+                                <input type="hidden" name="old_system_allowed" value="<?php echo htmlspecialchars($eachAllowed); ?>"> 
+                                <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($this->csrfToken); ?>">
+                                <button type="submit" name="Action" value="Remove_Allowed_System" class="btn btn-danger"><i class="bi bi-trash"></i></button>
+                            </form>
+                        </div>
+                    </div>
+                </li>
+
             <?php
             }
 
@@ -404,9 +503,21 @@
                 <td><?php echo htmlspecialchars($eachRoute["end"]); ?></td>
                 <td><?php echo htmlspecialchars($eachRoute["model"]); ?></td>
                 <td>
+                    <?php echo isset($eachRoute["allowrushoverride"]) ? htmlspecialchars($eachRoute["allowrushoverride"]): ""; ?>
+                    <?php echo isset($eachRoute["rushmultiplier"]) ? "<br>( " . htmlspecialchars($eachRoute["rushmultiplier"]) . "× )" : ""; ?>
+                    <?php echo isset($eachRoute["minimumrushpremium"]) ? "<br>[ " . htmlspecialchars(number_format($eachRoute["minimumrushpremium"])) . " ISK ]" : ""; ?>
+                </td>
+                <td>
+                    <?php echo isset($eachRoute["expiration"]) ? "( " . htmlspecialchars($eachRoute["expiration"]) . " Days )" : ""; ?>
+                    <?php echo isset($eachRoute["timetocomplete"]) ? "<br>[ " . htmlspecialchars($eachRoute["timetocomplete"]) . " Days ]" : ""; ?>
+                    <?php echo isset($eachRoute["rushexpiration"]) ? "<br>(( " . htmlspecialchars($eachRoute["rushexpiration"]) . " Days ))" : ""; ?>
+                    <?php echo isset($eachRoute["rushtimetocomplete"]) ? "<br>[[ " . htmlspecialchars($eachRoute["rushtimetocomplete"]) . " Days ]]" : ""; ?>
+                </td>
+                <td>
                     <?php echo isset($eachRoute["price"]) ? htmlspecialchars(number_format($eachRoute["price"])) . " ISK" : ""; ?>
-                    <?php echo isset($eachRoute["gateprice"]) ? "<br>(" . htmlspecialchars(number_format($eachRoute["gateprice"])) . " ISK)" : ""; ?>
-                    <?php echo isset($eachRoute["minimumprice"]) ? "<br>[" . htmlspecialchars(number_format($eachRoute["minimumprice"])) . " ISK]" : ""; ?>
+                    <?php echo isset($eachRoute["gateprice"]) ? "<br>( " . htmlspecialchars(number_format($eachRoute["gateprice"])) . " ISK )" : ""; ?>
+                    <?php echo isset($eachRoute["minimumprice"]) ? "<br>[ " . htmlspecialchars(number_format($eachRoute["minimumprice"])) . " ISK ]" : ""; ?>
+                    <?php echo isset($eachRoute["maximumprice"]) ? "<br>[[ " . htmlspecialchars(number_format($eachRoute["maximumprice"])) . " ISK ]]" : ""; ?>
                 </td>
                 <td>
                     <?php echo isset($eachRoute["premium"]) ? htmlspecialchars($eachRoute["premium"]) . " %" : ""; ?>
@@ -419,7 +530,7 @@
                         <input type="hidden" name="old_route_origin" value="<?php echo htmlspecialchars($eachRoute["start"]); ?>"> 
                         <input type="hidden" name="old_route_destination" value="<?php echo htmlspecialchars($eachRoute["end"]); ?>">
                         <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($this->csrfToken); ?>">
-                        <button type="submit" name="Action" value="Remove_Route" class="btn btn-danger"><i class="bi bi-trash"></i></button>
+                        <button type="submit" name="Action" value="Remove_Route" class="btn btn-danger btn-sm"><i class="bi bi-trash"></i></button>
                     </form>
                 </td>
             </tr>
@@ -456,37 +567,88 @@
                                     <label for="route_origin" class="form-label h5">Start</label>
                                     <input type="text" name="route_origin" id="route_origin" class="form-control" required>
 
-                                </div>
-                                <div class="col-xl-3">
-
-                                    <label for="route_destination" class="form-label h5">End</label>
+                                    <label for="route_destination" class="form-label h5 mt-3">End</label>
                                     <input type="text" name="route_destination" id="route_destination" class="form-control" required>
 
-                                </div>
-                                <div class="col-xl-3">
+                                    <h5 class="mt-3">Price Model</h5>
 
-                                    <h5 class="mb-2 ms-4">Price Model</h5>
-
-                                    <div class="form-check ms-4">
+                                    <div class="form-check">
                                         <input class="form-check-input" type="radio" name="route_price_model" id="route_price_model" value="Standard" checked>
                                         <label class="form-check-label" for="route_price_model">Standard</label>
                                     </div>
-                                    <div class="form-check ms-4">
+                                    <div class="form-check">
                                         <input class="form-check-input" type="radio" name="route_price_model" id="route_price_model" value="Fixed">
                                         <label class="form-check-label" for="route_price_model">Fixed</label>
                                     </div>
-                                    <div class="form-check ms-4">
+                                    <div class="form-check">
                                         <input class="form-check-input" type="radio" name="route_price_model" id="route_price_model" value="Range">
                                         <label class="form-check-label" for="route_price_model">Range Only</label>
                                     </div>
-                                    <div class="form-check ms-4">
+                                    <div class="form-check">
                                         <input class="form-check-input" type="radio" name="route_price_model" id="route_price_model" value="Gate">
                                         <label class="form-check-label" for="route_price_model">Gate Only</label>
                                     </div>
-
-                                    <div class="form-check form-switch mt-3 ms-4">
+                                    
+                                    <div class="form-check form-switch mt-3">
                                         <input class="form-check-input" type="checkbox" role="switch" name="route_add_inverse" id="route_add_inverse" value="true">
                                         <label class="form-check-label" for="route_add_inverse">Also Add Inverse Route</label>
+                                    </div>
+
+                                </div>
+                                <div class="col-xl-3">
+
+                                    <label for="route_rush_multiplier" class="form-label h5 ms-4">Rush Multiplier Override</label>
+                                    <div class="input-group ms-4 pe-4">
+                                        <input type="text" class="form-control" name="route_rush_multiplier" id="route_rush_multiplier">
+                                        <span class="input-group-text">×</span>
+                                    </div>
+
+                                    <label for="route_minimum_rush_premium" class="form-label h5 ms-4 mt-3">Minimum Rush Premium Override</label>
+                                    <div class="input-group ms-4 pe-4">
+                                        <input type="text" class="form-control" name="route_minimum_rush_premium" id="route_minimum_rush_premium">
+                                        <span class="input-group-text">ISK</span>
+                                    </div>
+
+                                    <h5 class="ms-4 mt-3">Allow Rush Override</h5>
+
+                                    <div class="form-check ms-4">
+                                        <input class="form-check-input" type="radio" name="route_allow_rush" id="route_allow_rush" value="No Override" checked>
+                                        <label class="form-check-label" for="route_allow_rush">No Override</label>
+                                    </div>
+                                    <div class="form-check ms-4">
+                                        <input class="form-check-input" type="radio" name="route_allow_rush" id="route_allow_rush" value="Allow">
+                                        <label class="form-check-label" for="route_allow_rush">Allow</label>
+                                    </div>
+                                    <div class="form-check ms-4">
+                                        <input class="form-check-input" type="radio" name="route_allow_rush" id="route_allow_rush" value="Disallow">
+                                        <label class="form-check-label" for="route_allow_rush">Disallow</label>
+                                    </div>
+
+                                </div>
+                                <div class="col-xl-3">
+
+                                    <label for="route_contract_expiration" class="form-label h5">Expiration Override</label>
+                                    <div class="input-group">
+                                        <input type="text" class="form-control" name="route_contract_expiration" id="route_contract_expiration">
+                                        <span class="input-group-text">Days</span>
+                                    </div>
+
+                                    <label for="route_time_to_complete" class="form-label h5 mt-3">TTC Override</label>
+                                    <div class="input-group">
+                                        <input type="text" class="form-control" name="route_time_to_complete" id="route_time_to_complete">
+                                        <span class="input-group-text">Days</span>
+                                    </div>
+
+                                    <label for="route_rush_contract_expiration" class="form-label h5 mt-3">Rush Expiration Override</label>
+                                    <div class="input-group">
+                                        <input type="text" class="form-control" name="route_rush_contract_expiration" id="route_rush_contract_expiration">
+                                        <span class="input-group-text">Days</span>
+                                    </div>
+
+                                    <label for="route_rush_time_to_complete" class="form-label h5 mt-3">Rush TTC Override</label>
+                                    <div class="input-group">
+                                        <input type="text" class="form-control" name="route_rush_time_to_complete" id="route_rush_time_to_complete">
+                                        <span class="input-group-text">Days</span>
                                     </div>
 
                                 </div>
@@ -507,6 +669,12 @@
                                     <label for="route_minimum_price" class="form-label h5 mt-3">Minimum Price Override</label>
                                     <div class="input-group">
                                         <input type="text" class="form-control" name="route_minimum_price" id="route_minimum_price">
+                                        <span class="input-group-text">ISK</span>
+                                    </div>
+
+                                    <label for="route_maximum_price" class="form-label h5 mt-3">Maximum Price Override</label>
+                                    <div class="input-group">
+                                        <input type="text" class="form-control" name="route_maximum_price" id="route_maximum_price">
                                         <span class="input-group-text">ISK</span>
                                     </div>
 
