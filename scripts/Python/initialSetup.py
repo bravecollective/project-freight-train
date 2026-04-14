@@ -100,7 +100,7 @@ sq1Database = DatabaseConnector.connect(
 
 try:
 
-    with open(dataFile("/scripts/Python/Static") + "/geographicInformationV3.json") as systemsFile:
+    with open(dataFile("/scripts/Python/Static") + "/geographicInformationV5.json") as systemsFile:
         systemsData = json.load(systemsFile)
 
     systemsTuple = [

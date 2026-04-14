@@ -35,7 +35,7 @@ jQuery(document).ready(function () {
         2000);
     });
     
-    $(document).on("click", ".route-link", function () {
+    $(document).on("click touchstart", ".route-link", function () {
         
         $("#origin").val($(this).attr("data-route-start"));
         $("#destination").val($(this).attr("data-route-end"));

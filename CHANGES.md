@@ -1,3 +1,18 @@
+# Patch Version Update Truck – 0 – 1
+
+## Routing
+- Added the new Exordium region.
+
+## Bugfixes
+- Click-to-Set-Route now works on mobile. 
+
+### UPDATE INSTRUCTIONS (From Version Pickup – 0 – *)
+
+1. Pause operation of the webserver.
+2. Sync up files with the repository.
+3. Run `initialSetup.py`.
+4. Restart operation of the webserver.
+
 # Major Version Update Truck – 0 – 0
 
 ## Features
@@ -11,6 +26,7 @@
     - A blank allowlist allows all systems
 - Route-specific overrides added for expiration, time-to-complete, their rush equivalents, the allowed use of the rush option, and the rush multiplier. 
     - The rush switch will now only be hidden if the option is disabled, and no routes with an `Allow` override exist.
+- Clicking on a route in the `Home` page will now set the Origin and Destination in the quote request form. 
 
 ## Bugfixes
 - Highsec-Highsec restrictions are no longer applied to defined routes
