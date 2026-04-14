@@ -1,3 +1,12 @@
+# Patch Version Update Truck – 0 – 2
+
+## Bugfixes
+- The Hauling Dashboard now casts volume and collateral to integers before passing them to the calculator, to match the behavior of the front page calculator.
+
+### UPDATE INSTRUCTIONS (From Version Pickup – 0 – *)
+
+1. Sync up files with the repository.
+
 # Patch Version Update Truck – 0 – 1
 
 ## Routing

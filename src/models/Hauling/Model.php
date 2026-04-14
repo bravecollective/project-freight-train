@@ -320,8 +320,8 @@
                     $eachContract->quote = $calculator->getQuote(
                         $eachContract->startSystem, 
                         $eachContract->endSystem, 
-                        $eachContract->collateral, 
-                        $eachContract->volume
+                        (int)$eachContract->collateral, 
+                        (int)$eachContract->volume
                     );
                     $eachContract->build_issues_and_standing();
 
