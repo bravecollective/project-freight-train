@@ -1,3 +1,12 @@
+# Patch Version Update Truck – 1 – 1
+
+## Bugfixes
+- Attempt three of getting click-to-set-route to work on mobile...
+
+### UPDATE INSTRUCTIONS (From Version Pickup – 0 – *)
+
+1. Sync up files with the repository.
+
 # Minor Version Update Truck – 1 – 0
 
 ## Features
