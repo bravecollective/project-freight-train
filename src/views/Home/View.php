@@ -192,14 +192,14 @@
                 <li class="list-group-item bg-dark text-light">
                     <div class="row">
                         <div class="col-7 fw-bold">
-                            <a class="route-link text-info" style="text-decoration: none;" data-route-start="<?php echo htmlspecialchars($eachRoute["Start"]); ?>" data-route-end="<?php echo htmlspecialchars($eachRoute["End"]); ?>"><?php echo htmlspecialchars($eachRoute["Start"]); ?> → <?php echo htmlspecialchars($eachRoute["End"]); ?></a>
+                            <a class="route-link text-info" style="text-decoration: none;" data-route-start="<?php echo htmlspecialchars($eachRoute["Start"]); ?>" data-route-end="<?php echo htmlspecialchars($eachRoute["End"]); ?>" data-bs-toggle="popover" data-bs-placement="right" title="Route Set!"><?php echo htmlspecialchars($eachRoute["Start"]); ?> → <?php echo htmlspecialchars($eachRoute["End"]); ?></a>
                         </div>
                         <div class="col-4">
                             <?php echo htmlspecialchars($eachRoute["Model"]) . " Pricing"; ?>
                         </div>
                         <?php if (!empty($eachRoute["Overrides"])): ?>
                             <div class="col-1">
-                                <a class="override-popover text-danger"  tabindex="0" data-bs-toggle="popover" data-bs-placement="right" data-bs-html="true" title="<?php echo htmlspecialchars($eachRoute["Start"]); ?> → <?php echo htmlspecialchars($eachRoute["End"]); ?> Overrides" data-bs-content="<?php echo implode("<br>", $eachRoute["Overrides"]); ?>"><i class="bi bi-database-fill-gear"></i></a><br>
+                                <a class="override-popover text-danger" tabindex="0" data-bs-toggle="popover" data-bs-placement="right" data-bs-html="true" title="<?php echo htmlspecialchars($eachRoute["Start"]); ?> → <?php echo htmlspecialchars($eachRoute["End"]); ?> Overrides" data-bs-content="<?php echo implode("<br>", $eachRoute["Overrides"]); ?>"><i class="bi bi-database-fill-gear"></i></a><br>
                             </div>
                         <?php endif; ?>
                     </div>
