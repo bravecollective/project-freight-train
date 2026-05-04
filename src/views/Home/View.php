@@ -62,6 +62,7 @@
                 </div>
             </form>
 
+            <?php $this->statusTemplate(); ?>
             <?php $this->resultsTemplate(); ?>
 
             <hr class="text-light mt-4">
@@ -105,6 +106,28 @@
             <hr class="text-light mt-3">
             
             <?php
+        }
+
+        protected function statusTemplate() {
+
+            if ($this->controller->contractData["Populated"]) {
+                ?>
+
+                    <div class="row text-light mt-3 fs-5">
+                        <div class="col-lg-2"></div>
+                        <div class="col-lg-3 d-flex flex-row">
+                            <div class="flex-fill m-1 p-2 badge bg-dark">Contract Queue: <?php echo htmlspecialchars(number_format($this->controller->contractData["Pending"])); ?></div>
+                        </div>
+                        <div class="col-lg-3 d-flex flex-row">
+                            <div class="flex-fill m-1 p-2 badge bg-dark">Last Day: <?php echo htmlspecialchars(number_format($this->controller->contractData["Completed"]["Day"])); ?></div>
+                            <div class="flex-fill m-1 p-2 badge bg-dark">Last Week: <?php echo htmlspecialchars(number_format($this->controller->contractData["Completed"]["Week"])); ?></div>
+                            <div class="flex-fill m-1 p-2 badge bg-dark">Last Month: <?php echo htmlspecialchars(number_format($this->controller->contractData["Completed"]["Month"])); ?></div>
+                        </div>
+                    </div>
+                    
+                <?php
+            }
+
         }
 
         protected function volumeLimitsTemplate() {
@@ -168,14 +191,14 @@
 
                 <li class="list-group-item bg-dark text-light">
                     <div class="row">
-                        <div class="col-lg-7 fw-bold">
-                            <a href="#" class="route-link text-info" style="text-decoration: none;" data-route-start="<?php echo htmlspecialchars($eachRoute["Start"]); ?>" data-route-end="<?php echo htmlspecialchars($eachRoute["End"]); ?>"><?php echo htmlspecialchars($eachRoute["Start"]); ?> → <?php echo htmlspecialchars($eachRoute["End"]); ?></a>
+                        <div class="col-7 fw-bold">
+                            <a class="route-link text-info" style="text-decoration: none;" data-route-start="<?php echo htmlspecialchars($eachRoute["Start"]); ?>" data-route-end="<?php echo htmlspecialchars($eachRoute["End"]); ?>"><?php echo htmlspecialchars($eachRoute["Start"]); ?> → <?php echo htmlspecialchars($eachRoute["End"]); ?></a>
                         </div>
-                        <div class="col-lg-4">
+                        <div class="col-4">
                             <?php echo htmlspecialchars($eachRoute["Model"]) . " Pricing"; ?>
                         </div>
                         <?php if (!empty($eachRoute["Overrides"])): ?>
-                            <div class="col-lg-1">
+                            <div class="col-1">
                                 <a class="override-popover text-danger"  tabindex="0" data-bs-toggle="popover" data-bs-placement="right" data-bs-html="true" title="<?php echo htmlspecialchars($eachRoute["Start"]); ?> → <?php echo htmlspecialchars($eachRoute["End"]); ?> Overrides" data-bs-content="<?php echo implode("<br>", $eachRoute["Overrides"]); ?>"><i class="bi bi-database-fill-gear"></i></a><br>
                             </div>
                         <?php endif; ?>
@@ -281,11 +304,11 @@
         protected function styleTemplate() {
             ?>
             
-            .copy-out, .override-popover {
+            .copy-out, .override-popover, .route-link {
                 border-bottom: dotted 1px;
             }
 
-            .copy-out:hover, .override-popover:hover {
+            .copy-out:hover, .override-popover:hover, .route-link:hover {
                 cursor: pointer;
             }
             

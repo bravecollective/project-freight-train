@@ -9,26 +9,86 @@
             if (isset($this->controller->sourceCharacterID)) {
                 ?>
 
-                    <h3 class="text-light" id="contract-list-header">Contracts to Complete</h3>
+                    <h3 class="text-light" id="contract-list-header">Outstanding Contracts</h3>
                 
-                    <table class="table table-dark align-middle text-start text-wrap small mt-4">
+                    <table class="table table-dark align-middle text-start text-wrap small mt-3">
                         <thead class="p-4">
                             <tr class="align-middle">
-                                <th scope="col" style="width: 5%;">Status</th>
                                 <th scope="col" style="width: 10%;">Issued</th>
-                                <th scope="col" style="width: 5%;">Expires<br>(Expected)</th>
-                                <th scope="col" style="width: 5%;">TTC<br>(Expected)</th>
-                                <th scope="col" style="width: 20%;">Pickup<br>Drop-Off</th>
-                                <th scope="col" style="width: 27.5%;">Issued By<br>Accepted By</th>
+                                <th scope="col" style="width: 5%;">
+                                    Expires
+                                    <br>
+                                    (Expected)
+                                </th>
+                                <th scope="col" style="width: 5%;">
+                                    TTC
+                                    <br>
+                                    (Expected)
+                                </th>
+                                <th scope="col" style="width: 22.5%;">
+                                    <i class="bi bi-box-seam"></i> Pickup
+                                    <br>
+                                    <i class="bi bi-send"></i> Drop-Off
+                                </th>
+                                <th scope="col" style="width: 30%;">
+                                    <i class="bi bi-person"></i> Issued By
+                                </th>
                                 <th scope="col" style="width: 5%;">Volume</th>
                                 <th scope="col" style="width: 7.5%;">Collateral</th>
-                                <th scope="col" style="width: 10%;">Reward<br>(Expected)</th>
-                                <th scope="col" style="width: 5%;">Problems</th>
+                                <th scope="col" style="width: 10%;">
+                                    Reward
+                                    <br>
+                                    (Expected)
+                                </th>
+                                <th scope="col" class="text-center" style="width: 5%;">Problems</th>
                             </tr>
                         </thead>
                         <tbody>
 
-                            <?php $this->contractLister(); ?>
+                            <?php $this->contractLister("outstanding"); ?>
+
+                        </tbody>
+                    </table>
+
+                    <h3 class="text-light mt-4" id="contract-list-header">In-Progress Contracts</h3>
+                
+                    <table class="table table-dark align-middle text-start text-wrap small mt-3">
+                        <thead class="p-4">
+                            <tr class="align-middle">
+                                <th scope="col" style="width: 10%;">Issued</th>
+                                <th scope="col" style="width: 5%;">
+                                    Expires
+                                    <br>
+                                    (Expected)
+                                </th>
+                                <th scope="col" style="width: 5%;">
+                                    TTC
+                                    <br>
+                                    (Expected)
+                                </th>
+                                <th scope="col" style="width: 22.5%;">
+                                    <i class="bi bi-box-seam"></i> Pickup
+                                    <br>
+                                    <i class="bi bi-send"></i> Drop-Off
+                                </th>
+                                <th scope="col" style="width: 30%;">
+                                    <i class="bi bi-person"></i> Issued By
+                                    <br>
+                                    <i class="bi bi-truck"></i> Accepted By
+                                </th>
+                                <th scope="col" style="width: 5%;">Volume</th>
+                                <th scope="col" style="width: 7.5%;">Collateral</th>
+                                <th scope="col" style="width: 10%;">
+                                    Reward
+                                    <br>
+                                    (Expected)
+                                </th>
+                                <th scope="col" class="text-center" style="width: 5%;">Problems</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+
+                            <?php $this->contractLister("in_progress"); ?>
 
                         </tbody>
                     </table>
@@ -57,63 +117,71 @@
 
         }
 
-        protected function contractLister() {
+        protected function contractLister($status) {
+            
             foreach ($this->model->contractData as $eachContractID => $eachContract) {
-            ?>
 
-            <tr class="table-<?php echo htmlspecialchars($eachContract->standing); ?>">
-                <td><?php echo htmlspecialchars(ucwords(str_replace("_", " ", $eachContract->status))); ?></td>
-                <td><?php echo htmlspecialchars($eachContract->issueDate->format("Y-m-d H:i:s \E\V\E")); ?></td>
-                <td>
-                    <?php echo htmlspecialchars($eachContract->expirationDays . " Days"); ?>
-                    <?php if (isset($eachContract->expectedExpirationDays) and $eachContract->expectedExpirationDays != $eachContract->expirationDays) {?>
-                        <br>
-                        <?php echo htmlspecialchars("(" . $eachContract->expectedExpirationDays . " Days)"); ?>
-                    <?php }?>
-                </td>
-                <td>
-                    <?php echo htmlspecialchars($eachContract->daysToComplete . " Days"); ?>
-                    <?php if (isset($eachContract->expectedDaysToComplete) and $eachContract->expectedDaysToComplete != $eachContract->daysToComplete) {?>
-                        <br>
-                        <?php echo htmlspecialchars("(" . $eachContract->expectedDaysToComplete . " Days)"); ?>
-                    <?php }?>
-                </td>
-                <td>
-                    <?php echo htmlspecialchars($eachContract->startLocation ?? "Unknown Location"); ?>
-                    <br>
-                    <?php echo htmlspecialchars($eachContract->endLocation ?? "Unknown Location"); ?>
-                </td>
-                <td>
-                    <?php echo htmlspecialchars($eachContract->issuerData["Character Name"]); ?> 
-                    <?php echo htmlspecialchars(" (" . $eachContract->issuerData["Corporation Name"] . ")"); ?>
-                    <?php echo isset($eachContract->issuerData["Alliance Name"]) ? htmlspecialchars(" [" . $eachContract->issuerData["Alliance Name"] . "]") : ""; ?>
-                    <?php if (isset($eachContract->acceptorData)) {?>
-                        <br>
-                        <?php echo htmlspecialchars($eachContract->acceptorData["Character Name"]); ?> 
-                        <?php echo htmlspecialchars(" (" . $eachContract->acceptorData["Corporation Name"] . ")"); ?>
-                        <?php echo isset($eachContract->acceptorData["Alliance Name"]) ? htmlspecialchars(" [" . $eachContract->acceptorData["Alliance Name"] . "]") : ""; ?>
-                    <?php }?>
-                </td>
-                <td><?php echo htmlspecialchars(number_format($eachContract->volume) . " m³"); ?></td>
-                <td><?php echo htmlspecialchars(number_format($eachContract->collateral) . " ISK"); ?></td>
-                <td>
-                    <?php echo htmlspecialchars(number_format($eachContract->reward) . " ISK"); ?>
-                    <?php if (isset($eachContract->expectedReward) and $eachContract->expectedReward != $eachContract->reward) {?>
-                        <br>
-                        <?php echo htmlspecialchars("(" . number_format($eachContract->expectedReward) . " ISK)"); ?>
-                    <?php }?>
-                </td>
-                <td>
-                    <?php if (!empty($eachContract->criticalIssues)) {?>
-                        <a class="issues-popover text-dark"  tabindex="0" data-bs-toggle="popover" data-bs-placement="left" data-bs-html="true" title="Critical Contract Issues" data-bs-content="<ul class='m-0 p-2'><li><?php echo implode("</li><li>", $eachContract->criticalIssues); ?></li></ul>"><i class="bi bi-x-octagon"></i></a><br>
-                    <?php }
-                    elseif (!empty($eachContract->issues)) {?>
-                        <a class="issues-popover text-dark"  tabindex="0" data-bs-toggle="popover" data-bs-placement="left" data-bs-html="true" title="Contract Issues" data-bs-content="<ul class='m-0 p-2'><li><?php echo implode("</li><li>", $eachContract->issues); ?></li></ul>"><i class="bi bi-exclamation-triangle"></i></a><br>
-                    <?php }?>
-                </td>
-            </tr>
-                
-            <?php
+                if ($eachContract->status == $status) {
+                    ?>
+
+                    <tr class="table-<?php echo htmlspecialchars($eachContract->standing); ?>">
+                        <td><?php echo htmlspecialchars($eachContract->issueDate->format("Y-m-d H:i:s \E\V\E")); ?></td>
+                        <td>
+                            <?php echo htmlspecialchars($eachContract->expirationDays . " Days"); ?>
+                            <?php if (isset($eachContract->expectedExpirationDays) and $eachContract->expectedExpirationDays != $eachContract->expirationDays) {?>
+                                <br>
+                                <?php echo htmlspecialchars("(" . $eachContract->expectedExpirationDays . " Days)"); ?>
+                            <?php }?>
+                        </td>
+                        <td>
+                            <?php echo htmlspecialchars($eachContract->daysToComplete . " Days"); ?>
+                            <?php if (isset($eachContract->expectedDaysToComplete) and $eachContract->expectedDaysToComplete != $eachContract->daysToComplete) {?>
+                                <br>
+                                <?php echo htmlspecialchars("(" . $eachContract->expectedDaysToComplete . " Days)"); ?>
+                            <?php }?>
+                        </td>
+                        <td>
+                            <i class="bi bi-box-seam"></i> 
+                            <?php echo htmlspecialchars($eachContract->startLocation ?? "Unknown Location"); ?>
+                            <br>
+                            <i class="bi bi-send"></i> 
+                            <?php echo htmlspecialchars($eachContract->endLocation ?? "Unknown Location"); ?>
+                        </td>
+                        <td>
+                            <i class="bi bi-person"></i> 
+                            <?php echo htmlspecialchars($eachContract->issuerData["Character Name"]); ?> 
+                            <?php echo htmlspecialchars(" (" . $eachContract->issuerData["Corporation Name"] . ")"); ?>
+                            <?php echo isset($eachContract->issuerData["Alliance Name"]) ? htmlspecialchars(" [" . $eachContract->issuerData["Alliance Name"] . "]") : ""; ?>
+                            <?php if (isset($eachContract->acceptorData)) {?>
+                                <br>
+                                <i class="bi bi-truck"></i> 
+                                <?php echo htmlspecialchars($eachContract->acceptorData["Character Name"]); ?> 
+                                <?php echo htmlspecialchars(" (" . $eachContract->acceptorData["Corporation Name"] . ")"); ?>
+                                <?php echo isset($eachContract->acceptorData["Alliance Name"]) ? htmlspecialchars(" [" . $eachContract->acceptorData["Alliance Name"] . "]") : ""; ?>
+                            <?php }?>
+                        </td>
+                        <td><?php echo htmlspecialchars(number_format($eachContract->volume) . " m³"); ?></td>
+                        <td><?php echo htmlspecialchars(number_format($eachContract->collateral) . " ISK"); ?></td>
+                        <td>
+                            <?php echo htmlspecialchars(number_format($eachContract->reward) . " ISK"); ?>
+                            <?php if (isset($eachContract->expectedReward) and $eachContract->expectedReward != $eachContract->reward) {?>
+                                <br>
+                                <?php echo htmlspecialchars("(" . number_format($eachContract->expectedReward) . " ISK)"); ?>
+                            <?php }?>
+                        </td>
+                        <td class="text-center">
+                            <?php if (!empty($eachContract->criticalIssues)) {?>
+                                <a class="issues-popover text-dark"  tabindex="0" data-bs-toggle="popover" data-bs-placement="left" data-bs-html="true" title="Critical Contract Issues" data-bs-content="<ul class='m-0 p-2'><li><?php echo implode("</li><li>", $eachContract->criticalIssues); ?></li></ul>"><i class="bi bi-x-octagon"></i></a><br>
+                            <?php }
+                            elseif (!empty($eachContract->issues)) {?>
+                                <a class="issues-popover text-dark"  tabindex="0" data-bs-toggle="popover" data-bs-placement="left" data-bs-html="true" title="Contract Issues" data-bs-content="<ul class='m-0 p-2'><li><?php echo implode("</li><li>", $eachContract->issues); ?></li></ul>"><i class="bi bi-exclamation-triangle"></i></a><br>
+                            <?php }?>
+                        </td>
+                    </tr>
+                        
+                    <?php
+                }
+
             }
         }
         

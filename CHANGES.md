@@ -1,3 +1,21 @@
+# Minor Version Update Truck – 1 – 0
+
+## Features
+- The Home page now shows a basic contract history including:
+    - Contract queue size
+    - Contracts completed in the last day, week, and month
+
+## Hauling Dashboard
+- Listings have been split into Outstanding and In-Progress.
+- Icons now distinguish values that share a table cell.
+
+## Bugfixes
+- Click-to-Set-Route should now work on mobile.
+
+### UPDATE INSTRUCTIONS (From Version Pickup – 0 – *)
+
+1. Sync up files with the repository.
+
 # Patch Version Update Truck – 0 – 2
 
 ## Bugfixes
