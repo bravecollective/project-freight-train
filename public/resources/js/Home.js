@@ -18,11 +18,6 @@ jQuery(document).ready(function () {
       return new bootstrap.Popover(eachPopover, {trigger: "manual"})
     })
 
-    var copyPopoverTriggerList = [].slice.call($(".route-link"))
-    var copyPopoverList = copyPopoverTriggerList.map(function (eachPopover) {
-      return new bootstrap.Popover(eachPopover, {trigger: "manual"})
-    })
-
     var overridePopoverTriggerList = [].slice.call($(".override-popover"))
     var overridePopoverList = overridePopoverTriggerList.map(function (eachPopover) {
       return new bootstrap.Popover(eachPopover, {trigger: "focus"})
@@ -40,18 +35,10 @@ jQuery(document).ready(function () {
         2000);
     });
     
-    $(".route-link").click(function() {
+    $(document).on("click touchstart", ".route-link", function () {
         
         $("#origin").val($(this).attr("data-route-start"));
         $("#destination").val($(this).attr("data-route-end"));
-
-        var thisPopover = bootstrap.Popover.getInstance($(this));
-
-        thisPopover.show();
-        setTimeout(function () {
-            thisPopover.hide();
-        },
-        2000);
 
     });
 
